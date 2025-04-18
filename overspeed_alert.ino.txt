@@ -1,0 +1,46 @@
+// Overspeeding Alert using GPS and GSM
+#include <SoftwareSerial.h>
+SoftwareSerial gpsSerial(3, 4);  // GPS RX, TX
+SoftwareSerial gsmSerial(7, 8);  // GSM TX, RX
+
+int buzzerPin = 9;
+float speed = 0;
+
+void setup() {
+  Serial.begin(9600);
+  gpsSerial.begin(9600);
+  gsmSerial.begin(9600);
+  pinMode(buzzerPin, OUTPUT);
+}
+
+void loop() {
+  // Simulated speed from GPS
+  speed = getSpeedFromGPS();
+
+  Serial.print("Speed: ");
+  Serial.println(speed);
+
+  if (speed > 60) { // Overspeeding threshold
+    digitalWrite(buzzerPin, HIGH);
+    sendSMS("Overspeeding detected! Reduce speed.");
+  } else {
+    digitalWrite(buzzerPin, LOW);
+  }
+  delay(2000);
+}
+
+float getSpeedFromGPS() {
+  // Simulate GPS speed (replace with actual GPS parsing)
+  return random(40, 80); // Random speed for testing
+}
+
+void sendSMS(String message) {
+  gsmSerial.println("AT+CMGF=1");    
+  delay(100);
+  gsmSerial.println("AT+CMGS=\"+91xxxxxxxxxx\""); // Replace with phone number
+  delay(100);
+  gsmSerial.println(message);
+  delay(100);
+  gsmSerial.write(26); // ASCII code for CTRL+Z
+  delay(1000);
+}

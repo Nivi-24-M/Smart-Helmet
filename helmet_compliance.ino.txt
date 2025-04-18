@@ -1,0 +1,25 @@
+// Helmet Compliance Module using IR Sensor
+int irSensorPin = 2;  // IR Sensor output pin
+int buzzerPin = 9;    // Buzzer pin
+int ignitionRelay = 8; // Connected to relay for ignition
+
+void setup() {
+  pinMode(irSensorPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(ignitionRelay, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int helmetWorn = digitalRead(irSensorPin);
+  if (helmetWorn == HIGH) {
+    digitalWrite(buzzerPin, LOW);       // No beep
+    digitalWrite(ignitionRelay, HIGH);  // Allow ignition
+    Serial.println("Helmet Worn - Ignition ON");
+  } else {
+    digitalWrite(buzzerPin, HIGH);      // Alert
+    digitalWrite(ignitionRelay, LOW);   // Block ignition
+    Serial.println("Helmet Not Worn - Ignition OFF");
+  }
+  delay(500);
+}
